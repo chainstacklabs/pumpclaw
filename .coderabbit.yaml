@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
+language: "en-US"
+tone_instructions: "Be concise. This is a docs-only skill repo — focus on accuracy and correctness of CLI command examples."
+
+reviews:
+  profile: "assertive"
+  high_level_summary: true
+  poem: false
+  collapse_walkthrough: true
+
+  pre_merge_checks:
+    title:
+      mode: "error"
+      requirements: "Must follow conventional commits: feat|fix|chore|docs|refactor"
+
+  auto_review:
+    enabled: true
+    drafts: false
+    ignore_title_keywords:
+      - "WIP"
+      - "DO NOT MERGE"
+
+  path_filters:
+    - "!.github/**"
+
+chat:
+  auto_reply: true

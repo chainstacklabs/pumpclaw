@@ -1,0 +1,77 @@
+name: Remove spam comments and PRs
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  pull_request_target:
+    types: [opened, edited]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  delete-spam-comment:
+    if: github.event_name != 'pull_request_target'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.comment.body || '';
+            const spamPatterns = [
+              /Submitted via GitHub Bounty Hunter/i,
+              /Payment Details/i,
+              /Wallet Address:\s*T[A-Za-z0-9]{33}/i,
+              /USDT\s*\(TRC20\)/i,
+              /Platform:\s*OKX/i,
+            ];
+            if (spamPatterns.some(p => p.test(body))) {
+              const isReview = context.eventName === 'pull_request_review_comment';
+              if (isReview) {
+                await github.rest.pulls.deleteReviewComment({
+                  ...context.repo,
+                  comment_id: context.payload.comment.id,
+                });
+              } else {
+                await github.rest.issues.deleteComment({
+                  ...context.repo,
+                  comment_id: context.payload.comment.id,
+                });
+              }
+              console.log(`Deleted spam comment ${context.payload.comment.id} by ${context.payload.comment.user.login}`);
+            }
+
+  close-spam-pr:
+    if: github.event_name == 'pull_request_target'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const body = pr.body || '';
+            const title = pr.title || '';
+            const text = title + ' ' + body;
+            const spamPatterns = [
+              /Submitted via GitHub Bounty Hunter/i,
+              /Payment Details/i,
+              /Wallet Address:\s*T[A-Za-z0-9]{33}/i,
+              /USDT\s*\(TRC20\)/i,
+              /Platform:\s*OKX/i,
+            ];
+            if (spamPatterns.some(p => p.test(text))) {
+              await github.rest.issues.createComment({
+                ...context.repo,
+                issue_number: pr.number,
+                body: 'Closed as spam.',
+              });
+              await github.rest.pulls.update({
+                ...context.repo,
+                pull_number: pr.number,
+                state: 'closed',
+              });
+              console.log(`Closed spam PR #${pr.number} by ${pr.user.login}`);
+            }
