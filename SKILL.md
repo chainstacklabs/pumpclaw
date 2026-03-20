@@ -8,8 +8,8 @@ description: >
   swap, buy, sell, launch, or manage pump.fun tokens.
 compatibility: "Requires uv and pumpfun-cli (install via uv from github.com/chainstacklabs/pumpfun-cli)"
 metadata:
-  author: antonsauchyk
-  version: "1.0"
+  author: chainstacklabs
+  version: "0.1"
   category: crypto-trading
   requires:
     bins: ["uv", "pumpfun"]
