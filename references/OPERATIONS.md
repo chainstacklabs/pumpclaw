@@ -150,8 +150,14 @@ Close empty ATAs, then transfer all remaining SOL to recipient.
 
 ## Token Discovery
 
+Listings come from pump.fun's frontend API and contain pump.fun coins only. Each
+row names its quote asset (`quote_symbol`) and USD market cap. With an RPC set,
+rows also carry `price` (in the quote asset) and `bonding_progress` read from
+chain; without one those fields are absent, so check `pumpfun info <mint>` before
+trading.
+
 ### `pumpfun tokens trending [--limit N]`
-Top runners + recommended tokens.
+Coins moving most right now (pump.fun's movers board).
 
 | Option | Type | Default | Description |
 |---|---|---|---|
@@ -165,21 +171,21 @@ Recently launched tokens.
 | `--limit` / `-n` | INTEGER | 20 | Number of tokens to show |
 
 ### `pumpfun tokens graduating [--limit N]`
-Tokens near bonding curve completion.
+Tokens closest to bonding curve completion, as pump.fun ranks them.
 
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `--limit` / `-n` | INTEGER | 20 | Number of tokens to show |
 
 ### `pumpfun tokens recommended [--limit N]`
-Recommended tokens by pump.fun.
+Recommended tokens by pump.fun. pump.fun serves at most 10.
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `--limit` / `-n` | INTEGER | 20 | Number of tokens to show |
+| `--limit` / `-n` | INTEGER | 10 | Number of tokens to show |
 
 ### `pumpfun tokens search <query> [--limit N]`
-Search tokens by keyword.
+Search tokens by name or ticker, older coins included. Searching by mint address does not work; use `pumpfun info <mint>`.
 
 | Option | Type | Default | Description |
 |---|---|---|---|

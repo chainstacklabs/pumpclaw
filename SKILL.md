@@ -153,7 +153,7 @@ These apply to ALL commands:
 | Insufficient balance | Not enough SOL, or not enough of the coin's quote asset | Check `pumpfun wallet balance`, fund wallet |
 | Slippage exceeded | Price moved beyond tolerance | Increase `--slippage` or retry |
 | RPC error | Network/endpoint issue | Check `PUMPFUN_RPC`, try different endpoint |
-| Token not found | Invalid mint address | Verify mint via `pumpfun info` or `pumpfun tokens search` |
+| Token not found | Invalid mint address | Verify the mint with `pumpfun info <mint>`, or find it by name with `pumpfun tokens search <name>` |
 
 ## Full Command Reference
 
