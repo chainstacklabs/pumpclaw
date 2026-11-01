@@ -139,7 +139,7 @@ pumpfun claim-cashback --confirm              # Claim volume-based rewards
 ## Global Options
 
 These apply to ALL commands:
-- `--json` — output as JSON (auto-detected when piping). Trade results carry `quote_symbol`, `quote_mint`, and amounts as `quote_spent` / `quote_received` (dry runs: `quote_in`, `expected_quote`, `min_quote_out`)
+- `--json` — output as JSON (auto-detected when piping). Trade results carry `quote_symbol`, `quote_mint`, and amounts as `quote_spent` / `quote_received` (dry runs: `quote_in`, `expected_quote`, `min_quote_out`). Every amount also has an exact integer twin in raw units (`quote_spent_raw`, `tokens_sold_raw`, …); use those for arithmetic, since the float can drop a unit
 - `--rpc <url>` — override RPC endpoint
 - `--keyfile <path>` — override wallet keystore path
 - `--priority-fee <micro_lamports>` — priority fee override
