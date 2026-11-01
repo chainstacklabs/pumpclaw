@@ -2,8 +2,8 @@
 
 ## Trading Operations
 
-### `pumpfun buy <mint> <sol_amount>`
-Buy tokens with SOL. Smart-routes between bonding curve and PumpSwap AMM.
+### `pumpfun buy <mint> <amount>`
+Spend exactly `amount` of the coin's quote asset (SOL for most coins). Smart-routes between bonding curve and PumpSwap AMM. A non-SOL coin spends that asset, which the wallet must hold.
 
 | Option | Type | Default | Description |
 |---|---|---|---|
@@ -13,7 +13,7 @@ Buy tokens with SOL. Smart-routes between bonding curve and PumpSwap AMM.
 | `--dry-run` | FLAG | off | Simulate trade without sending transaction |
 
 ### `pumpfun sell <mint> <amount>`
-Sell tokens for SOL. Amount can be a number or `all`.
+Sell tokens for the coin's quote asset. Amount can be a number or `all`.
 
 | Option | Type | Default | Description |
 |---|---|---|---|
@@ -23,7 +23,7 @@ Sell tokens for SOL. Amount can be a number or `all`.
 | `--dry-run` | FLAG | off | Simulate trade without sending transaction |
 
 ### `pumpfun info <mint>`
-Display on-chain token info — price, bonding progress, reserves, graduation status.
+Display on-chain token info — quote asset, price, bonding progress, reserves, graduation status, creator fee, and mayhem/cashback/holder-reward flags.
 
 | Option | Type | Default | Description |
 |---|---|---|---|
@@ -32,7 +32,7 @@ Display on-chain token info — price, bonding progress, reserves, graduation st
 ## Token Launch
 
 ### `pumpfun launch`
-Launch a new token on pump.fun (create_v2 + extend_account).
+Launch a new token on pump.fun (create_v2 + extend_account). With `--buy`, the opening buy goes in the same transaction.
 
 | Option | Type | Required | Description |
 |---|---|---|---|
@@ -40,8 +40,13 @@ Launch a new token on pump.fun (create_v2 + extend_account).
 | `--ticker` | TEXT | Yes | Token ticker/symbol |
 | `--desc` | TEXT | Yes | Token description |
 | `--image` | TEXT | No | Path to token image |
-| `--buy` | FLOAT | No | Initial buy amount in SOL |
-| `--mayhem` | FLAG | No | Enable mayhem mode |
+| `--buy` | FLOAT | No | Opening buy, in the quote asset |
+| `--quote-mint` | TEXT | No | Price the coin in this mint instead of SOL; the wallet must hold it to buy |
+| `--creator-fee-bps` | INTEGER | No | Creator fee; only applies to a coin priced in a QuoteControl mint |
+| `--holder-reward` | FLAG | No | Pay the creator fee to holders instead of the creator |
+| `--mayhem` | FLAG | No | Enable mayhem mode (SOL coins only) |
+| `--slippage` | INTEGER | No | Slippage for the opening buy (default 15) |
+| `--confirm` | FLAG | No | Wait for transaction confirmation |
 
 ## Migration
 
@@ -55,10 +60,11 @@ Trigger migration from bonding curve to PumpSwap AMM. Only works when bonding cu
 ## Rewards & Fees
 
 ### `pumpfun claim-cashback`
-Claim volume-based cashback rewards.
+Claim volume-based cashback rewards in one quote asset.
 
 | Option | Type | Default | Description |
 |---|---|---|---|
+| `--quote-mint` | TEXT | SOL | Quote asset the cashback accrued in |
 | `--confirm` | FLAG | off | Wait for transaction confirmation |
 
 ### `pumpfun close-volume-acc`
@@ -69,10 +75,11 @@ Close volume accumulator account and recover rent SOL.
 | `--confirm` | FLAG | off | Wait for transaction confirmation |
 
 ### `pumpfun collect-creator-fee`
-Collect creator fees from pump.fun and PumpSwap vaults.
+Collect creator fees from pump.fun and PumpSwap vaults. Vaults are per quote asset, so fees earned in USDC need a separate run.
 
 | Option | Type | Default | Description |
 |---|---|---|---|
+| `--quote-mint` | TEXT | SOL | Quote asset to collect |
 | `--confirm` | FLAG | off | Wait for transaction confirmation |
 
 ## Transaction Status
