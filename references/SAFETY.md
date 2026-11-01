@@ -2,9 +2,9 @@
 
 ## Before Every Trade
 
-1. **Dry-run first** — always simulate with `--dry-run` before committing SOL
+1. **Dry-run first** — always simulate with `--dry-run` before committing funds
 2. **Check token info** — run `pumpfun info <mint>` to understand current price, reserves, and graduation status
-3. **Verify balance** — `pumpfun wallet balance` to confirm you can cover the trade + transaction fees
+3. **Verify balance** — `pumpfun wallet balance` to confirm you can cover the trade (in the coin's quote asset) + transaction fees in SOL
 4. **Know the routing** — bonding curve tokens and graduated AMM tokens behave differently
 
 ## Slippage Management
@@ -41,6 +41,7 @@
 - Token that just graduated — liquidity may be thin on AMM initially
 - Selling `all` of a large position — may move price significantly
 - Multiple rapid trades — each one pays transaction fees
+- A coin priced in something other than SOL — `buy` spends that asset, not SOL; check `quote_symbol` first
 
 ## Password Handling
 

@@ -6,10 +6,10 @@ description: >
   compute units, and dry-run simulation. Also covers token launch, migration,
   wallet management, and token discovery. Use when the user wants to trade,
   swap, buy, sell, launch, or manage pump.fun tokens.
-compatibility: "Requires uv and pumpfun-cli (install via uv from github.com/chainstacklabs/pumpfun-cli)"
+compatibility: "Requires uv and pumpfun-cli 0.2 or later (install via uv from github.com/chainstacklabs/pumpfun-cli)"
 metadata:
   author: chainstacklabs
-  version: "0.1"
+  version: "0.2"
   category: crypto-trading
   requires:
     bins: ["uv", "pumpfun"]
@@ -32,7 +32,7 @@ uv tool install git+https://github.com/chainstacklabs/pumpfun-cli.git
 uv tool install --force git+https://github.com/chainstacklabs/pumpfun-cli.git
 ```
 
-This installs `pumpfun` globally — available from any directory.
+This installs `pumpfun` globally — available from any directory. `pumpfun --version` should report 0.2 or later; older versions build transactions the current pump.fun program rejects.
 
 ## Pre-Trade Checklist
 
@@ -40,8 +40,8 @@ Before any trade, verify:
 
 1. **Wallet exists**: `pumpfun wallet show` — confirms keystore is set up
 2. **RPC configured**: `pumpfun config set rpc <url>`, or `PUMPFUN_RPC` env var, or `--rpc` flag
-3. **Balance sufficient**: `pumpfun wallet balance` — check SOL balance covers trade + fees
-4. **Token status**: `pumpfun info <mint>` — check if token is on bonding curve or graduated to PumpSwap AMM
+3. **Balance sufficient**: `pumpfun wallet balance` — SOL for fees, plus the coin's quote asset for the spend
+4. **Token status**: `pumpfun info <mint>` — bonding curve or graduated to PumpSwap AMM, and which quote asset it is priced in (`quote_symbol`)
 
 ## Smart Routing
 
@@ -53,14 +53,26 @@ The CLI automatically routes trades based on token status:
 
 Always run `pumpfun info <mint>` first to understand the token's current state.
 
+## Quote Assets
+
+Most coins are priced in SOL, but a coin can be priced in USDC or another mint
+pump.fun admits. `buy`, `sell` and `info` read the quote asset from the coin, and
+every amount is in it:
+
+- `pumpfun buy <mint> 5` spends 5 SOL on a SOL coin, and 5 USDC on a USDC coin
+- buying a non-SOL coin spends that asset, so the wallet must already hold it
+- results name the asset in `quote_symbol` (`SOL`, `USDC`, or the mint address)
+
+Check `quote_symbol` in `pumpfun info <mint>` before choosing an amount.
+
 ## Core Trading Commands
 
 ### Buy tokens
 ```bash
-pumpfun buy <mint> <sol_amount> [--slippage 15] [--force-amm] [--confirm] [--dry-run]
+pumpfun buy <mint> <amount> [--slippage 15] [--force-amm] [--confirm] [--dry-run]
 ```
 - `mint`: token mint address
-- `sol_amount`: SOL to spend (float)
+- `amount`: exact amount to spend, in the coin's quote asset (float)
 - `--slippage`: tolerance percent (default: 15)
 - `--dry-run`: simulate without sending — **always use this first for new tokens**
 
@@ -75,11 +87,20 @@ pumpfun sell <mint> <amount|all> [--slippage 15] [--force-amm] [--confirm] [--dr
 ```bash
 pumpfun info <mint> [--timeout 30]
 ```
-Shows price, bonding curve progress, reserves, graduation status.
+Shows price, quote asset, bonding curve progress, reserves, graduation status, and whether the coin is mayhem, cashback or holder-reward.
+
+### Launch a token
+```bash
+pumpfun launch --name <name> --ticker <ticker> --uri <metadata-json-url> [--buy <amount>] [--quote-mint <mint>] [--creator-fee-bps N] [--holder-reward] [--mayhem] [--confirm]
+```
+- `--uri` is a metadata JSON (`name`, `symbol`, `description`, `image`) the user already hosts; pump.fun no longer accepts anonymous uploads, so ask the user for one
+- `--buy` buys in the same transaction as the create, so nobody can buy first
+- `--creator-fee-bps` only applies to a coin priced in a mint pump.fun's QuoteControl admits; the CLI refuses it otherwise
+- `--mayhem` only works with SOL as the quote asset
 
 ## Safety Guardrails
 
-1. **Always dry-run first**: Use `--dry-run` on buy/sell before committing real SOL
+1. **Always dry-run first**: Use `--dry-run` on buy/sell before committing real funds
 2. **Check slippage**: Default 15% is generous — tighten for large trades
 3. **Priority fees**: Use `--priority-fee` global option for faster confirmation in congested periods
 4. **Compute units**: Use `--compute-units` global option to override default CU limit
@@ -87,7 +108,7 @@ Shows price, bonding curve progress, reserves, graduation status.
 
 ## Common Workflows
 
-### "Buy X SOL of token Y"
+### "Buy X of token Y" (X in the coin's quote asset)
 ```bash
 pumpfun info <mint>                           # Check status & price
 pumpfun buy <mint> <X> --dry-run              # Simulate
@@ -110,14 +131,15 @@ pumpfun buy <mint> <amount> --confirm         # Buy before graduation
 
 ### "Check and collect fees"
 ```bash
-pumpfun collect-creator-fee --confirm         # Collect from pump.fun + PumpSwap
+pumpfun collect-creator-fee --confirm         # Collect SOL fees from pump.fun + PumpSwap
+pumpfun collect-creator-fee --quote-mint <mint> --confirm   # Fees earned in another quote asset
 pumpfun claim-cashback --confirm              # Claim volume-based rewards
 ```
 
 ## Global Options
 
 These apply to ALL commands:
-- `--json` — output as JSON (auto-detected when piping)
+- `--json` — output as JSON (auto-detected when piping). Trade results carry `quote_symbol`, `quote_mint`, and amounts as `quote_spent` / `quote_received` (dry runs: `quote_in`, `expected_quote`, `min_quote_out`)
 - `--rpc <url>` — override RPC endpoint
 - `--keyfile <path>` — override wallet keystore path
 - `--priority-fee <micro_lamports>` — priority fee override
@@ -128,7 +150,7 @@ These apply to ALL commands:
 | Error | Cause | Fix |
 |---|---|---|
 | Wrong password | Wallet decryption failed | Re-enter correct password or set `PUMPFUN_PASSWORD` |
-| Insufficient balance | Not enough SOL | Check `pumpfun wallet balance`, fund wallet |
+| Insufficient balance | Not enough SOL, or not enough of the coin's quote asset | Check `pumpfun wallet balance`, fund wallet |
 | Slippage exceeded | Price moved beyond tolerance | Increase `--slippage` or retry |
 | RPC error | Network/endpoint issue | Check `PUMPFUN_RPC`, try different endpoint |
 | Token not found | Invalid mint address | Verify mint via `pumpfun info` or `pumpfun tokens search` |
