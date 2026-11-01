@@ -38,8 +38,9 @@ Launch a new token on pump.fun (create_v2 + extend_account). With `--buy`, the o
 |---|---|---|---|
 | `--name` | TEXT | Yes | Token name |
 | `--ticker` | TEXT | Yes | Token ticker/symbol |
-| `--desc` | TEXT | Yes | Token description |
-| `--image` | TEXT | No | Path to token image |
+| `--uri` | TEXT | Yes* | Hosted metadata JSON; pump.fun no longer accepts anonymous uploads |
+| `--desc` | TEXT | No | Description, used only when uploading without `--uri` |
+| `--image` | TEXT | No | Image, used only when uploading without `--uri` |
 | `--buy` | FLOAT | No | Opening buy, in the quote asset |
 | `--quote-mint` | TEXT | No | Price the coin in this mint instead of SOL; the wallet must hold it to buy |
 | `--creator-fee-bps` | INTEGER | No | Creator fee; only applies to a coin priced in a QuoteControl mint |
@@ -47,6 +48,8 @@ Launch a new token on pump.fun (create_v2 + extend_account). With `--buy`, the o
 | `--mayhem` | FLAG | No | Enable mayhem mode (SOL coins only) |
 | `--slippage` | INTEGER | No | Slippage for the opening buy (default 15) |
 | `--confirm` | FLAG | No | Wait for transaction confirmation |
+
+\* Without `--uri` the CLI attempts pump.fun's upload, which is currently refused.
 
 ## Migration
 

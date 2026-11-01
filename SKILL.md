@@ -91,8 +91,9 @@ Shows price, quote asset, bonding curve progress, reserves, graduation status, a
 
 ### Launch a token
 ```bash
-pumpfun launch --name <name> --ticker <ticker> --desc <text> [--buy <amount>] [--quote-mint <mint>] [--creator-fee-bps N] [--holder-reward] [--mayhem] [--confirm]
+pumpfun launch --name <name> --ticker <ticker> --uri <metadata-json-url> [--buy <amount>] [--quote-mint <mint>] [--creator-fee-bps N] [--holder-reward] [--mayhem] [--confirm]
 ```
+- `--uri` is a metadata JSON (`name`, `symbol`, `description`, `image`) the user already hosts; pump.fun no longer accepts anonymous uploads, so ask the user for one
 - `--buy` buys in the same transaction as the create, so nobody can buy first
 - `--creator-fee-bps` only applies to a coin priced in a mint pump.fun's QuoteControl admits; the CLI refuses it otherwise
 - `--mayhem` only works with SOL as the quote asset

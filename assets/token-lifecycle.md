@@ -3,7 +3,7 @@
 ## Phase 1: Launch (Bonding Curve)
 
 ```
-pumpfun launch --name "MyToken" --ticker "MTK" --desc "..." [--buy 0.1] [--quote-mint <mint>]
+pumpfun launch --name "MyToken" --ticker "MTK" --uri <metadata-json-url> [--buy 0.1] [--quote-mint <mint>]
 ```
 
 - Token is created on pump.fun with a bonding curve, priced in SOL unless `--quote-mint` names another asset
