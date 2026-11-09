@@ -5,7 +5,7 @@
 1. **Dry-run first** — always simulate with `--dry-run` before committing funds
 2. **Check token info** — run `pumpfun info <mint>` to understand current price, reserves, and graduation status
 3. **Verify balance** — `pumpfun wallet balance` to confirm you can cover the trade (in the coin's quote asset) + transaction fees in SOL
-4. **Know the routing** — bonding curve tokens and graduated AMM tokens behave differently
+4. **Know the routing** — bonding curve tokens and graduated AMM tokens behave differently, and `venue` says which one a trade used
 
 ## Slippage Management
 
@@ -31,9 +31,10 @@
 
 | Status | Routing | Notes |
 |---|---|---|
-| On bonding curve | pump.fun bonding curve | Price follows curve formula |
+| On bonding curve | pump.fun or LaunchLab bonding curve | Price follows curve formula |
 | Near graduation | Bonding curve | Watch for graduation — liquidity shift incoming |
-| Graduated (AMM) | PumpSwap AMM | Standard AMM pricing, deeper liquidity |
+| Graduated (AMM) | PumpSwap (pump.fun) or Raydium CPMM (LaunchLab) | Standard AMM pricing, deeper liquidity |
+| LaunchLab coin waiting for its pool | None | "CPMM pool is not open yet": retry once it opens |
 
 ## Red Flags
 
@@ -42,6 +43,8 @@
 - Selling `all` of a large position — may move price significantly
 - Multiple rapid trades — each one pays transaction fees
 - A coin priced in something other than SOL — `buy` spends that asset, not SOL; check `quote_symbol` first
+- A coin with a transfer fee (`transfer_fee_bps` in `info`) — a round trip pays it twice, on top of trading fees
+- A sell result with `tokens_kept` — the curve couldn't pay for all of them; those tokens are still in the wallet
 
 ## Password Handling
 

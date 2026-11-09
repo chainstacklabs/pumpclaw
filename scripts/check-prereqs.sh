@@ -9,7 +9,13 @@ if ! command -v pumpfun &>/dev/null && ! uv run pumpfun --version &>/dev/null 2>
     echo "ERROR: pumpfun CLI not found. Install via: uv tool install git+https://github.com/chainstacklabs/pumpfun-cli.git"
     errors=$((errors + 1))
 else
-    echo "OK: pumpfun CLI available"
+    version=$( (pumpfun --version 2>/dev/null || uv run pumpfun --version 2>/dev/null) | awk '{print $NF}')
+    if [ "$(printf '%s\n' 0.3.0 "$version" | sort -V | head -1)" = "0.3.0" ]; then
+        echo "OK: pumpfun CLI $version available"
+    else
+        echo "ERROR: pumpfun CLI $version is older than 0.3. Upgrade: uv tool install --force git+https://github.com/chainstacklabs/pumpfun-cli.git"
+        errors=$((errors + 1))
+    fi
 fi
 
 # Check RPC endpoint

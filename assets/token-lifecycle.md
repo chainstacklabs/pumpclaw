@@ -54,6 +54,14 @@ pumpfun claim-cashback --confirm       # Volume-based rewards
 pumpfun close-volume-acc               # Recover rent from volume tracker
 ```
 
+## Raydium LaunchLab Coins (letsbonk.fun, StonkFun, other launchpads)
+
+The same shape on different programs: a LaunchLab bonding curve, then a Raydium
+CPMM pool once Raydium migrates the completed curve. `buy`, `sell` and `info`
+route there on their own (`venue`: `launchlab`, then `cpmm`), and `--force-amm`
+goes straight to the CPMM pool. Between completion and the pool opening, trades
+say the CPMM pool is not open yet. Launch, `migrate`, fees and cashback are pump.fun only.
+
 ## Status Check at Any Phase
 
 ```
@@ -65,4 +73,4 @@ Returns:
 - Bonding curve progress (if applicable)
 - Quote and token reserves
 - Whether token has graduated
-- Which routing path buy/sell will use
+- Which venue buy/sell will use (`venue`)
