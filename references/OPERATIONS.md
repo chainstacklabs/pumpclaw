@@ -3,27 +3,27 @@
 ## Trading Operations
 
 ### `pumpfun buy <mint> <amount>`
-Spend exactly `amount` of the coin's quote asset (SOL for most coins). Smart-routes between bonding curve and PumpSwap AMM. A non-SOL coin spends that asset, which the wallet must hold.
+Spend exactly `amount` of the coin's quote asset (SOL for most coins). Routes to where the coin trades: a pump.fun curve or PumpSwap, a Raydium LaunchLab curve or Raydium CPMM (`venue` in the result). A non-SOL coin spends that asset, which the wallet must hold.
 
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `--slippage` | INTEGER | 15 | Slippage tolerance percent |
-| `--force-amm` | FLAG | off | Skip bonding curve, buy directly on PumpSwap AMM |
+| `--force-amm` | FLAG | off | Skip the bonding curve, buy in the pool (PumpSwap, or CPMM for LaunchLab coins) |
 | `--confirm` | FLAG | off | Wait for transaction confirmation |
 | `--dry-run` | FLAG | off | Simulate trade without sending transaction |
 
 ### `pumpfun sell <mint> <amount>`
-Sell tokens for the coin's quote asset. Amount can be a number or `all`.
+Sell tokens for the coin's quote asset, routed like `buy`. Amount can be a number or `all`. A pump.fun curve sell its reserves can't fully pay for sells what they cover and reports the rest as `tokens_kept`.
 
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `--slippage` | INTEGER | 15 | Slippage tolerance percent |
-| `--force-amm` | FLAG | off | Skip bonding curve, sell directly on PumpSwap AMM |
+| `--force-amm` | FLAG | off | Skip the bonding curve, sell in the pool (PumpSwap, or CPMM for LaunchLab coins) |
 | `--confirm` | FLAG | off | Wait for transaction confirmation |
 | `--dry-run` | FLAG | off | Simulate trade without sending transaction |
 
 ### `pumpfun info <mint>`
-Display on-chain token info — quote asset, price, bonding progress, reserves, graduation status, creator fee, and mayhem/cashback/holder-reward flags.
+Display on-chain token info — venue, quote asset, price, bonding progress, reserves and graduation status. pump.fun coins add creator fee and mayhem/cashback/holder-reward flags; LaunchLab coins add the launchpad (`platform`), curve fee, transfer fee and, once graduated, their CPMM pool.
 
 | Option | Type | Default | Description |
 |---|---|---|---|
@@ -54,7 +54,7 @@ Launch a new token on pump.fun (create_v2 + extend_account). With `--buy`, the o
 ## Migration
 
 ### `pumpfun migrate <mint>`
-Trigger migration from bonding curve to PumpSwap AMM. Only works when bonding curve is complete.
+Trigger migration of a pump.fun coin from bonding curve to PumpSwap AMM. Only works when bonding curve is complete. LaunchLab coins are migrated by Raydium, not by this command.
 
 | Option | Type | Default | Description |
 |---|---|---|---|

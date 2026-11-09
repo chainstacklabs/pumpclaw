@@ -1,6 +1,6 @@
 # pumpclaw
 
-An agent skill for trading on pump.fun through [pumpfun-cli](https://github.com/chainstacklabs/pumpfun-cli).
+An agent skill for trading on pump.fun and Raydium LaunchLab (letsbonk.fun, StonkFun and other launchpads) through [pumpfun-cli](https://github.com/chainstacklabs/pumpfun-cli).
 
 Works with any agent that supports the Agent Skills standard: [OpenClaw](https://github.com/openclaw/openclaw), [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Cursor](https://cursor.com), [Codex](https://openai.com/index/codex/), and others.
 
@@ -21,7 +21,7 @@ https://github.com/chainstacklabs/pumpclaw
 
 ## What it does
 
-Gives your AI agent the knowledge to operate pumpfun-cli: buy, sell, launch tokens, manage wallets, browse trending tokens, and handle migrations from bonding curve to PumpSwap AMM.
+Gives your AI agent the knowledge to operate pumpfun-cli: buy and sell on pump.fun, PumpSwap, Raydium LaunchLab and Raydium CPMM, launch tokens, manage wallets, browse trending tokens, and handle migrations from bonding curve to PumpSwap AMM.
 
 Includes trading safety guardrails: dry-run simulation, slippage checks, balance validation.
 
