@@ -14,7 +14,7 @@
 
 An agent skill for trading on **pump.fun** and on **letsbonk.fun**, **StonkFun** and every other launchpad on Raydium LaunchLab, through [pumpfun-cli](https://github.com/chainstacklabs/pumpfun-cli). It gives your AI agent what it needs to buy and sell on the bonding curve and in PumpSwap and Raydium CPMM pools, launch pump.fun coins, and manage a wallet, with dry runs and safety checks before real funds move.
 
-Works with any agent that supports the [Agent Skills](https://agentskills.io/home) standard: [OpenClaw](https://github.com/openclaw/openclaw), [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Cursor](https://cursor.com), [Codex](https://openai.com/index/codex/) and others.
+Works with any agent that supports the [Agent Skills](https://agentskills.io/home) standard: [OpenClaw](https://github.com/openclaw/openclaw), [Claude Code](https://code.claude.com/docs), [Cursor](https://cursor.com), [Codex](https://openai.com/index/codex/) and others.
 
 > **Also by Chainstack**
 > - [**pumpfun-cli**](https://github.com/chainstacklabs/pumpfun-cli) — the command-line tool this skill drives; usable on its own by humans and scripts.
@@ -33,7 +33,7 @@ Works with any agent that supports the [Agent Skills](https://agentskills.io/hom
 ### 1. Prerequisites
 
 - [uv](https://docs.astral.sh/uv/getting-started/installation/) — it handles Python, no separate install needed
-- pumpfun-cli **0.3 or later**:
+- pumpfun-cli **0.3.1 or later**:
 
   ```bash
   uv tool install git+https://github.com/chainstacklabs/pumpfun-cli.git
@@ -71,11 +71,10 @@ Set `PUMPFUN_PASSWORD` in the agent's environment so it can trade without a pass
 | Trading | Buy and sell on pump.fun and LaunchLab curves, and in PumpSwap and Raydium CPMM pools once a coin graduates; the CLI routes each trade and reports the `venue` |
 | Quote assets | Coins priced in SOL, USDC, tokenized stocks and other tokens, with Token-2022 transfer fees counted |
 | Launch | Launch a pump.fun coin from a hosted metadata URI, with an opening buy in the same transaction |
+| Discovery | Browse pump.fun's trending, new and graduating coins, and search by name or ticker |
 | Fees and rewards | Collect creator fees, claim cashback, trigger a pump.fun migration |
 | Wallet | Create, import, export, balances, transfers, closing empty token accounts |
 | Safety | Dry runs first, slippage and priority-fee guidance, the CLI's error messages and what to do about each |
-
-Token discovery (`pumpfun tokens`) uses pump.fun's frontend API, which currently refuses non-browser clients ([pumpfun-cli#33](https://github.com/chainstacklabs/pumpfun-cli/issues/33)); until that is fixed, the agent asks for the mint.
 
 ## Structure
 

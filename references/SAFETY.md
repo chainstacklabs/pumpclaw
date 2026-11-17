@@ -4,7 +4,7 @@
 
 1. **Dry-run first** — always simulate with `--dry-run` before committing funds
 2. **Check token info** — run `pumpfun info <mint>` to understand current price, reserves, and graduation status
-3. **Verify balance** — `pumpfun wallet balance` to confirm you can cover the trade (in the coin's quote asset) + transaction fees in SOL
+3. **Verify balance** — confirm you can cover the trade in the coin's quote asset plus transaction fees in SOL: `pumpfun wallet balance` shows SOL, `pumpfun wallet tokens` shows any other quote asset
 4. **Know the routing** — bonding curve tokens and graduated AMM tokens behave differently, and `venue` says which one a trade used
 
 ## Slippage Management
