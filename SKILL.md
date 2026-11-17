@@ -8,10 +8,10 @@ description: >
   covers pump.fun token launch, migration, wallet management, and token
   discovery. Use when the user wants to trade, swap, buy, sell, launch, or
   manage pump.fun, letsbonk.fun or StonkFun tokens.
-compatibility: "Requires uv and pumpfun-cli 0.3 or later (install via uv from github.com/chainstacklabs/pumpfun-cli)"
+compatibility: "Requires uv and pumpfun-cli 0.3.1 or later (install via uv from github.com/chainstacklabs/pumpfun-cli)"
 metadata:
   author: chainstacklabs
-  version: "0.3"
+  version: "0.3.1"
   category: crypto-trading
   requires:
     bins: ["uv", "pumpfun"]
@@ -35,7 +35,7 @@ uv tool install git+https://github.com/chainstacklabs/pumpfun-cli.git
 uv tool install --force git+https://github.com/chainstacklabs/pumpfun-cli.git
 ```
 
-This installs `pumpfun` globally — available from any directory. `pumpfun --version` should report 0.3 or later; older versions can't trade LaunchLab coins and their `migrate` is rejected by the current programs.
+This installs `pumpfun` globally — available from any directory. `pumpfun --version` should report 0.3.1 or later; with 0.3.0 pump.fun refuses the `tokens` listings, and older versions can't trade LaunchLab coins and their `migrate` is rejected by the current programs.
 
 ## Pre-Trade Checklist
 
@@ -43,7 +43,7 @@ Before any trade, verify:
 
 1. **Wallet exists**: `pumpfun wallet show` — confirms keystore is set up
 2. **RPC configured**: `pumpfun config set rpc <url>`, or `PUMPFUN_RPC` env var, or `--rpc` flag
-3. **Balance sufficient**: `pumpfun wallet balance` — SOL for fees, plus the coin's quote asset for the spend
+3. **Balance sufficient**: `pumpfun wallet balance` shows SOL, needed for fees and for the spend on a SOL coin; for a coin priced in another asset, `pumpfun wallet tokens` shows that asset's balance
 4. **Token status**: `pumpfun info <mint>` — which venue the coin trades on (`venue`), whether it has graduated, and which quote asset it is priced in (`quote_symbol`)
 
 ## Smart Routing
@@ -184,7 +184,7 @@ These apply to ALL commands:
 | "CPMM pool is not open yet" | The LaunchLab curve is complete, Raydium hasn't opened the pool | Wait and retry |
 | "graduated to Raydium AMM v4" | The LaunchLab coin migrated somewhere this CLI can't trade | Don't trade it with this CLI |
 | "getProgramAccounts" | The RPC won't search LaunchLab pools for a coin priced in something other than SOL | Use an RPC that serves `getProgramAccounts` |
-| "pump.fun API returned HTTP 403" from `tokens` | pump.fun's listing API is refusing non-browser clients | Listings are unavailable; ask the user for the mint |
+| "pump.fun API returned HTTP 403" from `tokens` | pump.fun's listing API refused the request; it is unofficial and changes without notice | Upgrade the CLI if `pumpfun --version` is below 0.3.1; otherwise listings are unavailable, ask the user for the mint |
 
 ## Full Command Reference
 
