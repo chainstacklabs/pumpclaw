@@ -8,6 +8,8 @@ reviews:
   high_level_summary: true
   poem: false
   collapse_walkthrough: true
+  auto_approvals:
+    enabled: true
 
   pre_merge_checks:
     title:
