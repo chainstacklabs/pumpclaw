@@ -28,3 +28,4 @@ reviews:
 
 chat:
   auto_reply: true
+  allow_non_org_members: false
