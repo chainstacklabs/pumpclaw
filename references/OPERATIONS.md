@@ -13,7 +13,7 @@ Spend exactly `amount` of the coin's quote asset (SOL for most coins). Routes to
 | `--dry-run` | FLAG | off | Simulate trade without sending transaction |
 
 ### `pumpfun sell <mint> <amount>`
-Sell tokens for the coin's quote asset, routed like `buy`. Amount can be a number or `all`. A pump.fun curve sell its reserves can't fully pay for sells what they cover and reports the rest as `tokens_kept`.
+Sell tokens for the coin's quote asset, routed like `buy`. Amount can be a number or `all`. A pump.fun curve sell its reserves can't fully pay for sells what they cover and reports the rest as `tokens_kept`. A sell that empties the token account closes it in the same transaction and reports `token_account_closed` and `rent_recovered_sol`; a partial sell leaves it open.
 
 | Option | Type | Default | Description |
 |---|---|---|---|
