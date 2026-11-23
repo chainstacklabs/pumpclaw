@@ -8,10 +8,10 @@ description: >
   covers pump.fun token launch, migration, wallet management, and token
   discovery. Use when the user wants to trade, swap, buy, sell, launch, or
   manage pump.fun, letsbonk.fun or StonkFun tokens.
-compatibility: "Requires uv and pumpfun-cli 0.3.3 or later (install via uv from github.com/chainstacklabs/pumpfun-cli)"
+compatibility: "Requires uv and pumpfun-cli 0.3.4 or later (install via uv from github.com/chainstacklabs/pumpfun-cli)"
 metadata:
   author: chainstacklabs
-  version: "0.3.3"
+  version: "0.3.4"
   category: crypto-trading
   requires:
     bins: ["uv", "pumpfun"]
@@ -35,7 +35,7 @@ uv tool install git+https://github.com/chainstacklabs/pumpfun-cli.git
 uv tool install --force git+https://github.com/chainstacklabs/pumpfun-cli.git
 ```
 
-This installs `pumpfun` globally — available from any directory. `pumpfun --version` should report 0.3.3 or later: from November 25, 2026 pump.fun rejects trades from versions before 0.3.2, and before 0.3.3 `collect-creator-fee` misses fees still waiting on your coins.
+This installs `pumpfun` globally — available from any directory. `pumpfun --version` should report 0.3.4 or later: from November 25, 2026 pump.fun rejects trades from versions before 0.3.2, and before 0.3.3 `collect-creator-fee` misses fees still waiting on your coins.
 
 ## Pre-Trade Checklist
 
@@ -185,8 +185,8 @@ These apply to ALL commands:
 | "graduated to Raydium AMM v4" | The LaunchLab coin migrated somewhere this CLI can't trade | Don't trade it with this CLI |
 | "getProgramAccounts" | The RPC won't search LaunchLab pools for a coin priced in something other than SOL | Use an RPC that serves `getProgramAccounts` |
 | "more coins hold fees; run it again" from `collect-creator-fee` | One run sweeps the eight coins holding the most fees | Run it again until the message goes away |
-| "Could not search for fees waiting on your coins" from `collect-creator-fee` (`sweep_warning` in JSON) | The RPC refused `getProgramAccounts`, so only the vaults were collected; fees still waiting on your coins were missed | Use an RPC that serves `getProgramAccounts` |
-| "pump.fun API returned HTTP 403" from `tokens` | pump.fun's listing API refused the request; it is unofficial and changes without notice | Upgrade the CLI if `pumpfun --version` is below 0.3.3; otherwise listings are unavailable, ask the user for the mint |
+| "Could not search for fees waiting on your coins" from `collect-creator-fee` (`sweep_warning` in JSON), also on a "vaults hold no creator fees" error | The RPC refused `getProgramAccounts`, so only the vaults were checked; fees still waiting on your coins were missed, even when it reports nothing to collect | Use an RPC that serves `getProgramAccounts` |
+| "pump.fun API returned HTTP 403" from `tokens` | pump.fun's listing API refused the request; it is unofficial and changes without notice | Upgrade the CLI if `pumpfun --version` is below 0.3.4; otherwise listings are unavailable, ask the user for the mint |
 
 ## Full Command Reference
 
