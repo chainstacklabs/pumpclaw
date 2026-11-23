@@ -80,7 +80,7 @@ Close volume accumulator account and recover rent SOL.
 ### `pumpfun collect-creator-fee`
 Collect creator fees from pump.fun and PumpSwap vaults. Vaults are per quote asset, so fees earned in USDC need a separate run.
 
-pump.fun's newer trades leave the creator fee on the coin's curve or pool until it is swept into the vault, so the command first sweeps the coins holding the most fees (eight per run), found with `getProgramAccounts`. JSON output adds `coins_swept`, `coins_still_waiting` when more remain (run it again), and `sweep_warning` when the RPC refused the search and only the vaults were collected.
+pump.fun's newer trades leave the creator fee on the coin's curve or pool until it is swept into the vault, so the command first sweeps every coin holding fees, found with `getProgramAccounts`: the eight largest in the collect transaction, the rest in transactions sent and confirmed before it. JSON output adds `coins_swept`, and `sweep_warning` when the RPC refused the search and only the vaults were collected, or when some coins couldn't be swept (their fees still wait on them).
 
 | Option | Type | Default | Description |
 |---|---|---|---|
@@ -137,7 +137,7 @@ Transfer SOL or tokens to another wallet. Amount can be a number or `all`.
 | `--confirm` | FLAG | Wait for transaction confirmation |
 
 ### `pumpfun wallet close-atas`
-Close empty token accounts, up to 20 per run, and recover their rent: `recovered_sol` is what the closed accounts held. Accounts the wallet can't close (frozen, or another wallet holds the close authority) are listed in `skipped` and left as they are. If the RPC can't list the wallet's accounts, it fails with an error rather than reporting nothing to close.
+Close all empty token accounts, 20 per transaction (`signatures` lists them all), and recover their rent: `recovered_sol` is what the closed accounts held. Accounts the wallet can't close (frozen, or another wallet holds the close authority) are listed in `skipped` and left as they are. If the RPC can't list the wallet's accounts, it fails with an error rather than reporting nothing to close. If a later batch fails, the result still reports what closed, with the failure in `incomplete`.
 
 | Option | Type | Description |
 |---|---|---|
@@ -147,8 +147,8 @@ Close empty token accounts, up to 20 per run, and recover their rent: `recovered
 Close empty ATAs, then transfer all remaining SOL to recipient.
 
 - `ata_skipped` lists empty accounts the wallet can't close (frozen, or another wallet's close authority).
-- It closes at most 20 empty accounts. Closable accounts past that stay open and are not in `ata_skipped`, so with more than 20, run `close-atas` until it closes none before draining.
-- If the close step fails (a failed transaction, or the RPC couldn't list the accounts), `ata_error` says why and the SOL transfer is still attempted.
+- It closes every empty account it can and waits for those closes to land before sending the SOL, so their rent goes with it.
+- If the close step fails (a failed transaction, or the RPC couldn't list the accounts), `ata_error` says why and the SOL transfer is still attempted. If only a later batch failed, `ata_incomplete` says how many stayed open.
 - The transfer's own result is `sol_signature`, or `sol_error` if it failed.
 
 | Option | Type | Description |
