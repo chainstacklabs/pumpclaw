@@ -137,14 +137,14 @@ Transfer SOL or tokens to another wallet. Amount can be a number or `all`.
 | `--confirm` | FLAG | Wait for transaction confirmation |
 
 ### `pumpfun wallet close-atas`
-Close empty token accounts and recover rent SOL.
+Close empty token accounts, up to 20 per run, and recover their rent: `recovered_sol` is what the closed accounts held. Accounts the wallet can't close (frozen, or another wallet holds the close authority) are listed in `skipped` and left as they are.
 
 | Option | Type | Description |
 |---|---|---|
 | `--confirm` | FLAG | Wait for transaction confirmation |
 
 ### `pumpfun wallet drain <recipient>`
-Close empty ATAs, then transfer all remaining SOL to recipient.
+Close empty ATAs, then transfer all remaining SOL to recipient. Empty accounts it couldn't close are listed in `ata_skipped`.
 
 | Option | Type | Description |
 |---|---|---|
