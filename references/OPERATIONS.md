@@ -144,7 +144,7 @@ Close empty token accounts, up to 20 per run, and recover their rent: `recovered
 | `--confirm` | FLAG | Wait for transaction confirmation |
 
 ### `pumpfun wallet drain <recipient>`
-Close empty ATAs, then transfer all remaining SOL to recipient. Empty accounts it couldn't close are listed in `ata_skipped`.
+Close empty ATAs, then transfer all remaining SOL to recipient. Empty accounts it couldn't close are listed in `ata_skipped`; if the close transaction itself fails, `ata_error` says why and the SOL is still sent. It closes at most 20 empty accounts, so with more than that, run `close-atas` until it closes none before draining.
 
 | Option | Type | Description |
 |---|---|---|
