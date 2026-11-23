@@ -137,14 +137,19 @@ Transfer SOL or tokens to another wallet. Amount can be a number or `all`.
 | `--confirm` | FLAG | Wait for transaction confirmation |
 
 ### `pumpfun wallet close-atas`
-Close empty token accounts, up to 20 per run, and recover their rent: `recovered_sol` is what the closed accounts held. Accounts the wallet can't close (frozen, or another wallet holds the close authority) are listed in `skipped` and left as they are.
+Close empty token accounts, up to 20 per run, and recover their rent: `recovered_sol` is what the closed accounts held. Accounts the wallet can't close (frozen, or another wallet holds the close authority) are listed in `skipped` and left as they are. If the RPC can't list the wallet's accounts, it fails with an error rather than reporting nothing to close.
 
 | Option | Type | Description |
 |---|---|---|
 | `--confirm` | FLAG | Wait for transaction confirmation |
 
 ### `pumpfun wallet drain <recipient>`
-Close empty ATAs, then transfer all remaining SOL to recipient. Empty accounts it couldn't close are listed in `ata_skipped`; if the close transaction itself fails, `ata_error` says why and the SOL is still sent. It closes at most 20 empty accounts, so with more than that, run `close-atas` until it closes none before draining.
+Close empty ATAs, then transfer all remaining SOL to recipient.
+
+- `ata_skipped` lists empty accounts the wallet can't close (frozen, or another wallet's close authority).
+- It closes at most 20 empty accounts. Closable accounts past that stay open and are not in `ata_skipped`, so with more than 20, run `close-atas` until it closes none before draining.
+- If the close step fails (a failed transaction, or the RPC couldn't list the accounts), `ata_error` says why and the SOL transfer is still attempted.
+- The transfer's own result is `sol_signature`, or `sol_error` if it failed.
 
 | Option | Type | Description |
 |---|---|---|
