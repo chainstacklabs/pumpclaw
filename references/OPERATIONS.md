@@ -80,7 +80,7 @@ Close volume accumulator account and recover rent SOL.
 ### `pumpfun collect-creator-fee`
 Collect creator fees from pump.fun and PumpSwap vaults. Vaults are per quote asset, so fees earned in USDC need a separate run.
 
-pump.fun's newer trades leave the creator fee on the coin's curve or pool until it is swept into the vault, so the command first sweeps every coin holding fees, found with `getProgramAccounts`: the eight largest in the collect transaction, the rest in transactions sent and confirmed before it. JSON output adds `coins_swept`, and `sweep_warning` when the RPC refused the search and only the vaults were collected, when some coins couldn't be swept (their fees still wait on them), or when a sweep's outcome is unknown (whatever reached the vaults was collected; if that sweep lands later, its fees wait in the vault for the next collect).
+pump.fun's newer trades leave the creator fee on the coin's curve or pool until it is swept into the vault, so the command first sweeps every coin holding fees, found with `getProgramAccounts`: the eight largest in the collect transaction, the rest in transactions sent and confirmed before it. JSON output adds `coins_swept`, and `sweep_warning` when the RPC refused the search and only the vaults were collected, when some coins couldn't be swept (their fees still wait on them), or when a sweep's outcome is unknown (the collect takes what the vaults held when the CLI read them; if that sweep lands after the read, check it with `pumpfun tx-status`, and once it has landed its fees wait in the vault for the next collect).
 
 | Option | Type | Default | Description |
 |---|---|---|---|
