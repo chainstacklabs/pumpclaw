@@ -8,10 +8,10 @@ description: >
   covers pump.fun token launch, migration, wallet management, and token
   discovery. Use when the user wants to trade, swap, buy, sell, launch, or
   manage pump.fun, letsbonk.fun or StonkFun tokens.
-compatibility: "Requires uv and pumpfun-cli 0.3.7 or later (install via uv from github.com/chainstacklabs/pumpfun-cli)"
+compatibility: "Requires uv and pumpfun-cli 0.4.0 or later (install via uv from github.com/chainstacklabs/pumpfun-cli)"
 metadata:
   author: chainstacklabs
-  version: "0.3.7"
+  version: "0.4.0"
   category: crypto-trading
   requires:
     bins: ["uv", "pumpfun"]
@@ -35,7 +35,7 @@ uv tool install git+https://github.com/chainstacklabs/pumpfun-cli.git
 uv tool install --force git+https://github.com/chainstacklabs/pumpfun-cli.git
 ```
 
-This installs `pumpfun` globally — available from any directory. `pumpfun --version` should report 0.3.7 or later: from November 25, 2026 pump.fun rejects trades from versions before 0.3.2, before 0.3.3 `collect-creator-fee` misses fees still waiting on your coins, before 0.3.5 selling everything leaves the empty token account and its rent behind, before 0.3.6 `wallet close-atas` fails outright when one empty account still holds withheld transfer fees, and before 0.3.7 `close-atas`, `drain` and `collect-creator-fee` stop partway and need another run.
+This installs `pumpfun` globally — available from any directory. `pumpfun --version` should report 0.4.0 or later: from November 25, 2026 pump.fun rejects trades from versions before 0.3.2, before 0.3.3 `collect-creator-fee` misses fees still waiting on your coins, before 0.3.5 selling everything leaves the empty token account and its rent behind, before 0.3.6 `wallet close-atas` fails outright when one empty account still holds withheld transfer fees, before 0.3.7 `close-atas`, `drain` and `collect-creator-fee` stop partway and need another run, and before 0.4.0 commands report a transaction as done once it is sent, whether or not it lands.
 
 ## Pre-Trade Checklist
 
@@ -90,7 +90,7 @@ CLI's amounts already count it; tell the user before trading a coin that has one
 
 ### Buy tokens
 ```bash
-pumpfun buy <mint> <amount> [--slippage 15] [--force-amm] [--confirm] [--dry-run]
+pumpfun buy <mint> <amount> [--slippage 15] [--force-amm] [--fast] [--dry-run]
 ```
 - `mint`: token mint address
 - `amount`: exact amount to spend, in the coin's quote asset (float)
@@ -99,7 +99,7 @@ pumpfun buy <mint> <amount> [--slippage 15] [--force-amm] [--confirm] [--dry-run
 
 ### Sell tokens
 ```bash
-pumpfun sell <mint> <amount|all> [--slippage 15] [--force-amm] [--confirm] [--dry-run]
+pumpfun sell <mint> <amount|all> [--slippage 15] [--force-amm] [--fast] [--dry-run]
 ```
 - `amount`: token amount or `all` to sell entire balance
 - `--dry-run`: simulate without sending
@@ -112,7 +112,7 @@ Shows venue, price, quote asset, bonding curve progress, reserves and graduation
 
 ### Launch a token
 ```bash
-pumpfun launch --name <name> --ticker <ticker> --uri <metadata-json-url> [--buy <amount>] [--quote-mint <mint>] [--creator-fee-bps N] [--holder-reward] [--mayhem] [--confirm]
+pumpfun launch --name <name> --ticker <ticker> --uri <metadata-json-url> [--buy <amount>] [--quote-mint <mint>] [--creator-fee-bps N] [--holder-reward] [--mayhem] [--fast]
 ```
 - `--uri` is a metadata JSON (`name`, `symbol`, `description`, `image`) the user already hosts; pump.fun no longer accepts anonymous uploads, so ask the user for one
 - `--buy` buys in the same transaction as the create, so nobody can buy first
@@ -125,7 +125,7 @@ pumpfun launch --name <name> --ticker <ticker> --uri <metadata-json-url> [--buy 
 2. **Check slippage**: Default 15% is generous — tighten for large trades
 3. **Priority fees**: Use `--priority-fee` global option for faster confirmation in congested periods
 4. **Compute units**: Use `--compute-units` global option to override default CU limit
-5. **Confirm flag**: Add `--confirm` to wait for on-chain confirmation before returning
+5. **Outcomes**: Every sending command waits until its transaction lands, fails or expires, and says which. `--fast` returns once it is sent (`confirmed: false`, amounts are estimates); use it only when the user asks for speed, and check `pumpfun tx-status <signature>` before reporting a `--fast` trade as done
 
 ## Common Workflows
 
@@ -133,7 +133,7 @@ pumpfun launch --name <name> --ticker <ticker> --uri <metadata-json-url> [--buy 
 ```bash
 pumpfun info <mint>                           # Check status & price
 pumpfun buy <mint> <X> --dry-run              # Simulate
-pumpfun buy <mint> <X> --confirm              # Execute
+pumpfun buy <mint> <X>                        # Execute
 ```
 
 ### "Sell all of token Z"
@@ -145,27 +145,27 @@ nothing left for `wallet close-atas`.
 ```bash
 pumpfun wallet tokens                         # Verify holding
 pumpfun sell <mint> all --dry-run             # Simulate
-pumpfun sell <mint> all --confirm             # Execute
+pumpfun sell <mint> all                       # Execute
 ```
 
 ### "Snipe a graduating token"
 ```bash
 pumpfun tokens graduating                     # Find tokens near graduation
 pumpfun info <mint>                           # Check specific token
-pumpfun buy <mint> <amount> --confirm         # Buy before graduation
+pumpfun buy <mint> <amount>                   # Buy before graduation
 ```
 
 ### "Check and collect fees"
 ```bash
-pumpfun collect-creator-fee --confirm         # Sweep fees waiting on your coins, then collect SOL fees from pump.fun + PumpSwap
-pumpfun collect-creator-fee --quote-mint <mint> --confirm   # Fees earned in another quote asset
-pumpfun claim-cashback --confirm              # Claim volume-based rewards
+pumpfun collect-creator-fee                   # Sweep fees waiting on your coins, then collect SOL fees from pump.fun + PumpSwap
+pumpfun collect-creator-fee --quote-mint <mint>             # Fees earned in another quote asset
+pumpfun claim-cashback                        # Claim volume-based rewards
 ```
 
 ## Global Options
 
 These apply to ALL commands:
-- `--json` — output as JSON (auto-detected when piping). Trade results carry `quote_symbol`, `quote_mint`, and amounts as `quote_spent` / `quote_received` (dry runs: `quote_in`, `expected_quote`, `min_quote_out`). Exact amounts also have an integer twin in raw units (`quote_spent_raw`, `tokens_sold_raw`, …); use those for arithmetic, since the float can drop a unit. Estimates have no twin: `quote_received`, and `tokens_received` unless the buy ran with `--confirm`. To sell everything, pass `all` rather than an amount
+- `--json` — output as JSON (auto-detected when piping). Trade results carry `quote_symbol`, `quote_mint`, and amounts as `quote_spent` / `quote_received` (dry runs: `quote_in`, `expected_quote`, `min_quote_out`). Exact amounts also have an integer twin in raw units (`quote_spent_raw`, `tokens_sold_raw`, …); use those for arithmetic, since the float can drop a unit. Estimates have no twin: `tokens_received` and `quote_received` after `--fast`, or when the landed transaction can't be read back. To sell everything, pass `all` rather than an amount
 - `--rpc <url>` — override RPC endpoint
 - `--keyfile <path>` — override wallet keystore path
 - `--priority-fee <micro_lamports>` — priority fee override
@@ -179,8 +179,8 @@ These apply to ALL commands:
 | Insufficient balance | Not enough SOL, or not enough of the coin's quote asset | Check `pumpfun wallet balance`, fund wallet |
 | Slippage exceeded | Price moved beyond tolerance | Increase `--slippage` or retry |
 | RPC error | Network/endpoint issue | Check `PUMPFUN_RPC`, try different endpoint |
-| "nothing was sent", "The RPC refused the transaction" | The transaction never reached the network | Safe to run the command again |
-| "may still land", "could not confirm it" | It may have been sent; the outcome is unknown | Don't send again: a repeated buy can buy twice. Check `pumpfun tx-status <signature>`; if it landed, report that result. If it isn't found, tell the user the outcome is unknown instead of resending |
+| "nothing was sent", "The RPC refused the transaction", "did not land before its blockhash expired" | The transaction never ran; nothing was spent | Safe to run the command again |
+| "whether it landed is unknown", or "may still land" after `--fast` | The RPC stopped answering, or a `--fast` send got no reply; the transaction may still land | Don't send again: a repeated buy can buy twice. Check `pumpfun tx-status <signature>`; if it landed, report that result. If it isn't found, tell the user the outcome is unknown instead of resending |
 | "No pump.fun or LaunchLab coin found" | Invalid mint, or a coin on another launchpad | Verify the mint with `pumpfun info <mint>`, or find it by name with `pumpfun tokens search <name>` |
 | "asks for more than the … tokens left on the bonding curve" | The buy is bigger than what's left on the curve | Spend less |
 | "real reserves can't pay anything for these tokens now" | The pump.fun curve can't pay for a sell right now | Nothing was sent; retry later, or after graduation |
@@ -189,7 +189,7 @@ These apply to ALL commands:
 | "graduated to Raydium AMM v4" | The LaunchLab coin migrated somewhere this CLI can't trade | Don't trade it with this CLI |
 | "getProgramAccounts" | The RPC won't search LaunchLab pools for a coin priced in something other than SOL | Use an RPC that serves `getProgramAccounts` |
 | "Could not search for fees waiting on your coins" from `collect-creator-fee` (`sweep_warning` in JSON), also on a "vaults hold no creator fees" error | The RPC refused `getProgramAccounts`, so only the vaults were checked; fees still waiting on your coins were missed, even when it reports nothing to collect | Use an RPC that serves `getProgramAccounts` |
-| "pump.fun API returned HTTP 403" from `tokens` | pump.fun's listing API refused the request; it is unofficial and changes without notice | Upgrade the CLI if `pumpfun --version` is below 0.3.7; otherwise listings are unavailable, ask the user for the mint |
+| "pump.fun API returned HTTP 403" from `tokens` | pump.fun's listing API refused the request; it is unofficial and changes without notice | Upgrade the CLI if `pumpfun --version` is below 0.4.0; otherwise listings are unavailable, ask the user for the mint |
 
 ## Full Command Reference
 

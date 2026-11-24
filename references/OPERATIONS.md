@@ -9,7 +9,7 @@ Spend exactly `amount` of the coin's quote asset (SOL for most coins). Routes to
 |---|---|---|---|
 | `--slippage` | INTEGER | 15 | Slippage tolerance percent |
 | `--force-amm` | FLAG | off | Skip the bonding curve, buy in the pool (PumpSwap, or CPMM for LaunchLab coins) |
-| `--confirm` | FLAG | off | Wait for transaction confirmation |
+| `--fast` | FLAG | off | Send without waiting for the outcome; the result has `confirmed: false` |
 | `--dry-run` | FLAG | off | Simulate trade without sending transaction |
 
 ### `pumpfun sell <mint> <amount>`
@@ -19,7 +19,7 @@ Sell tokens for the coin's quote asset, routed like `buy`. Amount can be a numbe
 |---|---|---|---|
 | `--slippage` | INTEGER | 15 | Slippage tolerance percent |
 | `--force-amm` | FLAG | off | Skip the bonding curve, sell in the pool (PumpSwap, or CPMM for LaunchLab coins) |
-| `--confirm` | FLAG | off | Wait for transaction confirmation |
+| `--fast` | FLAG | off | Send without waiting for the outcome; the result has `confirmed: false` |
 | `--dry-run` | FLAG | off | Simulate trade without sending transaction |
 
 ### `pumpfun info <mint>`
@@ -47,7 +47,7 @@ Launch a new token on pump.fun (create_v2 + extend_account). With `--buy`, the o
 | `--holder-reward` | FLAG | No | Pay the creator fee to holders instead of the creator |
 | `--mayhem` | FLAG | No | Enable mayhem mode (SOL coins only) |
 | `--slippage` | INTEGER | No | Slippage for the opening buy (default 15) |
-| `--confirm` | FLAG | No | Wait for transaction confirmation |
+| `--fast` | FLAG | No | Send without waiting for the outcome; the result has `confirmed: false` |
 
 \* Without `--uri` the CLI attempts pump.fun's upload, which is currently refused.
 
@@ -58,7 +58,7 @@ Trigger migration of a pump.fun coin from bonding curve to PumpSwap AMM. Only wo
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `--confirm` | FLAG | off | Wait for transaction confirmation |
+| `--fast` | FLAG | off | Send without waiting for the outcome; the result has `confirmed: false` |
 
 ## Rewards & Fees
 
@@ -68,14 +68,14 @@ Claim volume-based cashback rewards in one quote asset.
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `--quote-mint` | TEXT | SOL | Quote asset the cashback accrued in |
-| `--confirm` | FLAG | off | Wait for transaction confirmation |
+| `--fast` | FLAG | off | Send without waiting for the outcome; the result has `confirmed: false` |
 
 ### `pumpfun close-volume-acc`
 Close volume accumulator account and recover rent SOL.
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `--confirm` | FLAG | off | Wait for transaction confirmation |
+| `--fast` | FLAG | off | Send without waiting for the outcome; the result has `confirmed: false` |
 
 ### `pumpfun collect-creator-fee`
 Collect creator fees from pump.fun and PumpSwap vaults. Vaults are per quote asset, so fees earned in USDC need a separate run.
@@ -85,7 +85,7 @@ pump.fun's newer trades leave the creator fee on the coin's curve or pool until 
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `--quote-mint` | TEXT | SOL | Quote asset to collect |
-| `--confirm` | FLAG | off | Wait for transaction confirmation |
+| `--fast` | FLAG | off | Send without waiting for the outcome; the result has `confirmed: false` |
 
 ## Transaction Status
 
@@ -134,26 +134,23 @@ Transfer SOL or tokens to another wallet. Amount can be a number or `all`.
 | Option | Type | Description |
 |---|---|---|
 | `--mint` | TEXT | Token mint address (omit for SOL transfer) |
-| `--confirm` | FLAG | Wait for transaction confirmation |
+| `--fast` | FLAG | Send without waiting for the outcome; the result has `confirmed: false` |
 
 ### `pumpfun wallet close-atas`
-Close all empty token accounts, 20 per transaction (`signatures` lists them all), and recover their rent: `recovered_sol` is what the closed accounts held. Accounts the wallet can't close (frozen, or another wallet holds the close authority) are listed in `skipped` and left as they are. If the RPC can't list the wallet's accounts, it fails with an error rather than reporting nothing to close. If a later batch fails, the result still reports what closed, with the failure in `incomplete`; when that message says the outcome is unknown ("may still land", "could not confirm it"), those accounts may have closed after all. Without `--confirm`, `closed`, `signatures` and `recovered_sol` count batches as sent, so one that then fails on chain is missing from `incomplete`.
+Close all empty token accounts, 20 per transaction (`signatures` lists them all), and recover their rent: `recovered_sol` is what the closed accounts held. Accounts the wallet can't close (frozen, or another wallet holds the close authority) are listed in `skipped` and left as they are. If the RPC can't list the wallet's accounts, it fails with an error rather than reporting nothing to close. If a later batch fails, the result still reports what closed, with the failure in `incomplete`; when it says a batch's outcome is unknown, up to that batch's accounts may have closed after all. With `--fast`, `closed`, `signatures` and `recovered_sol` count batches as sent, so one that then fails on chain is missing from `incomplete`.
 
 | Option | Type | Description |
 |---|---|---|
-| `--confirm` | FLAG | Wait for transaction confirmation |
+| `--fast` | FLAG | Send without waiting for the outcome; the result has `confirmed: false` |
 
 ### `pumpfun wallet drain <recipient>`
 Close empty ATAs, then transfer all remaining SOL to recipient.
 
 - `ata_skipped` lists empty accounts the wallet can't close (frozen, or another wallet's close authority).
-- It closes every empty account it can and waits for those closes to confirm before sending the SOL. The SOL amount is read from the finalized balance, so rent from closes that aren't finalized yet can stay in the wallet: check `pumpfun wallet balance` afterwards.
+- It closes every empty account it can and waits for those closes to land before sending the SOL, so their rent goes with it.
 - If the close step fails (a failed transaction, or the RPC couldn't list the accounts), `ata_error` says why and the SOL transfer is still attempted. If only a later batch failed, `ata_incomplete` says how many weren't confirmed closed; when its outcome is unknown, they may have closed after all.
 - The transfer's own result is `sol_signature`, or `sol_error` if it failed.
-
-| Option | Type | Description |
-|---|---|---|
-| `--confirm` | FLAG | Wait for transaction confirmation |
+- It always waits for each transaction's outcome; it has no `--fast`.
 
 ## Token Discovery
 
