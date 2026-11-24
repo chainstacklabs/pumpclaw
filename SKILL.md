@@ -179,6 +179,8 @@ These apply to ALL commands:
 | Insufficient balance | Not enough SOL, or not enough of the coin's quote asset | Check `pumpfun wallet balance`, fund wallet |
 | Slippage exceeded | Price moved beyond tolerance | Increase `--slippage` or retry |
 | RPC error | Network/endpoint issue | Check `PUMPFUN_RPC`, try different endpoint |
+| "nothing was sent", "The RPC refused the transaction" | The transaction never reached the network | Safe to run the command again |
+| "may still land", "could not confirm it" | It may have been sent; the outcome is unknown | Check `pumpfun tx-status <signature>` before sending again: a repeated buy can buy twice |
 | "No pump.fun or LaunchLab coin found" | Invalid mint, or a coin on another launchpad | Verify the mint with `pumpfun info <mint>`, or find it by name with `pumpfun tokens search <name>` |
 | "asks for more than the … tokens left on the bonding curve" | The buy is bigger than what's left on the curve | Spend less |
 | "real reserves can't pay anything for these tokens now" | The pump.fun curve can't pay for a sell right now | Nothing was sent; retry later, or after graduation |
