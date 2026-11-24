@@ -180,7 +180,7 @@ These apply to ALL commands:
 | Slippage exceeded | Price moved beyond tolerance | Increase `--slippage` or retry |
 | RPC error | Network/endpoint issue | Check `PUMPFUN_RPC`, try different endpoint |
 | "nothing was sent", "The RPC refused the transaction" | The transaction never reached the network | Safe to run the command again |
-| "may still land", "could not confirm it" | It may have been sent; the outcome is unknown | Don't send again yet: a repeated buy can buy twice. Check `pumpfun tx-status <signature>`; if it landed, report that result. If it isn't found, it can still land until its blockhash expires (usually 60–90 seconds, longer if the network stalls): check again after five minutes, and send again only if it is still not found. If you can't tell, don't resend; tell the user the outcome is unknown |
+| "may still land", "could not confirm it" | It may have been sent; the outcome is unknown | Don't send again: a repeated buy can buy twice. Check `pumpfun tx-status <signature>`; if it landed, report that result. If it isn't found, tell the user the outcome is unknown instead of resending |
 | "No pump.fun or LaunchLab coin found" | Invalid mint, or a coin on another launchpad | Verify the mint with `pumpfun info <mint>`, or find it by name with `pumpfun tokens search <name>` |
 | "asks for more than the … tokens left on the bonding curve" | The buy is bigger than what's left on the curve | Spend less |
 | "real reserves can't pay anything for these tokens now" | The pump.fun curve can't pay for a sell right now | Nothing was sent; retry later, or after graduation |
