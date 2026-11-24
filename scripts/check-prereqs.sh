@@ -10,10 +10,10 @@ if ! command -v pumpfun &>/dev/null && ! uv run pumpfun --version &>/dev/null 2>
     errors=$((errors + 1))
 else
     version=$( (pumpfun --version 2>/dev/null || uv run pumpfun --version 2>/dev/null) | awk '{print $NF}')
-    if [ "$(printf '%s\n' 0.3.6 "$version" | sort -V | head -1)" = "0.3.6" ]; then
+    if [ "$(printf '%s\n' 0.4.0 "$version" | sort -V | head -1)" = "0.4.0" ]; then
         echo "OK: pumpfun CLI $version available"
     else
-        echo "ERROR: pumpfun CLI $version is older than 0.3.6. Upgrade: uv tool install --force git+https://github.com/chainstacklabs/pumpfun-cli.git"
+        echo "ERROR: pumpfun CLI $version is older than 0.4.0. Upgrade: uv tool install --force git+https://github.com/chainstacklabs/pumpfun-cli.git"
         errors=$((errors + 1))
     fi
 fi

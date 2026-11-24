@@ -26,7 +26,7 @@ pumpfun sell <mint> <amount> # Sell to bonding curve
 ## Phase 3: Graduation Trigger
 
 ```
-pumpfun migrate <mint> --confirm
+pumpfun migrate <mint>
 ```
 
 - When bonding curve reaches 100%, the token is eligible for migration
@@ -49,8 +49,8 @@ pumpfun sell <mint> <amount> --force-amm # Sell on AMM
 ## Phase 5: Fee Collection
 
 ```
-pumpfun collect-creator-fee --confirm  # Sweeps fees waiting on up to 8 of your coins, then collects both vaults; rerun if it says more coins hold fees (add --quote-mint for non-SOL coins)
-pumpfun claim-cashback --confirm       # Volume-based rewards
+pumpfun collect-creator-fee  # Sweeps fees waiting on your coins, then collects both vaults (add --quote-mint for non-SOL coins)
+pumpfun claim-cashback       # Volume-based rewards
 pumpfun close-volume-acc               # Recover rent from volume tracker
 ```
 

@@ -33,7 +33,7 @@ Works with any agent that supports the [Agent Skills](https://agentskills.io/hom
 ### 1. Prerequisites
 
 - [uv](https://docs.astral.sh/uv/getting-started/installation/) — it handles Python, no separate install needed
-- pumpfun-cli **0.3.6 or later**:
+- pumpfun-cli **0.4.0 or later**:
 
   ```bash
   uv tool install git+https://github.com/chainstacklabs/pumpfun-cli.git
