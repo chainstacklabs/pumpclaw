@@ -54,7 +54,7 @@ https://github.com/chainstacklabs/pumpclaw
 ### 3. Set up the CLI
 
 ```bash
-pumpfun config set rpc https://your-node.chainstack.com/abc123
+pumpfun config set rpc https://solana-mainnet.core.chainstack.com/YOUR_AUTH_TOKEN
 pumpfun wallet create
 ```
 
